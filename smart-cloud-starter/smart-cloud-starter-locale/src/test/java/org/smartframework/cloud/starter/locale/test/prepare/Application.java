@@ -13,31 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.smartframework.cloud.utility.spring;
+package org.smartframework.cloud.starter.locale.test.prepare;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * 工具类注入
- *
- * @author liyulin
- * @date 2019-07-12
- */
-@Configuration
-public class UtilAutoConfigure {
+@SpringBootApplication(scanBasePackages = "org.smartframework.cloud.starter.locale")
+public class Application {
 
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SpringContextUtil springContextUtil() {
-        return new SpringContextUtil();
-    }
-
-    @Bean
-    public I18nUtil i18nUtil() {
-        return new I18nUtil();
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
 
 }

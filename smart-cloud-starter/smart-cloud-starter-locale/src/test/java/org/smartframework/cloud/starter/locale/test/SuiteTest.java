@@ -13,31 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.smartframework.cloud.utility.spring;
+package org.smartframework.cloud.starter.locale.test;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.junit.jupiter.api.Disabled;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.runner.RunWith;
 
-/**
- * 工具类注入
- *
- * @author liyulin
- * @date 2019-07-12
- */
-@Configuration
-public class UtilAutoConfigure {
-
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SpringContextUtil springContextUtil() {
-        return new SpringContextUtil();
-    }
-
-    @Bean
-    public I18nUtil i18nUtil() {
-        return new I18nUtil();
-    }
+@Disabled
+@RunWith(JUnitPlatform.class)
+@SelectPackages({"org.smartframework.cloud.starter.locale.test"})
+public class SuiteTest {
 
 }

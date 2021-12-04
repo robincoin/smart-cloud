@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.smartframework.cloud.utility.test.unit;
+package org.smartframework.cloud.starter.core.test.unit;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
-import org.smartframework.cloud.utility.NonceUtil;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.smartframework.cloud.starter.core.business.util.SnowFlakeIdUtil;
+import org.smartframework.cloud.starter.core.test.unit.prepare.snowflake.Application;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
-class NonceUtilUnitTest {
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = Application.class, args = "--spring.profiles.active=snowflake")
+class SnowFlakeUtilTest {
 
     @RepeatedTest(128)
-    void test() throws InterruptedException {
+    void testnextId() throws InterruptedException {
         int parties = 128;
         CountDownLatch latch = new CountDownLatch(parties);
         CopyOnWriteArraySet<String> values = new CopyOnWriteArraySet<>();
@@ -36,7 +42,7 @@ class NonceUtilUnitTest {
             new Thread(() -> {
                 try {
                     cyclicBarrier.await();
-                    values.add(NonceUtil.getInstance().nextId());
+                    values.add(String.valueOf(SnowFlakeIdUtil.getInstance().nextId()));
                     latch.countDown();
                 } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
@@ -44,7 +50,6 @@ class NonceUtilUnitTest {
             }).start();
         }
         latch.await();
-
         Assertions.assertThat(values).hasSize(parties);
     }
 
