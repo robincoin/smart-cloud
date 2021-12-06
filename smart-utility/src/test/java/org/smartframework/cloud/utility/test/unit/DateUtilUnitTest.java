@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.utility.test.unit;
 
 import org.assertj.core.api.Assertions;
@@ -7,28 +22,28 @@ import org.smartframework.cloud.utility.constant.DateFormartConst;
 
 import java.util.Date;
 
-public class DateUtilUnitTest {
+class DateUtilUnitTest {
 
-    public void testNow() {
+    void testNow() {
         Assertions.assertThat(DateUtil.now()).isNotNull();
     }
 
     @Test
-    public void testGetCurrentDate() {
+    void testGetCurrentDate() {
         String currentDateStr = DateUtil.getCurrentDate();
         Assertions.assertThat(currentDateStr).isNotBlank();
         Assertions.assertThat(currentDateStr.length()).isEqualTo(DateFormartConst.DATE.length());
     }
 
     @Test
-    public void testGetCurrentDateTime() {
+    void testGetCurrentDateTime() {
         String currentDateStr = DateUtil.getCurrentDateTime();
         Assertions.assertThat(currentDateStr).isNotBlank();
         Assertions.assertThat(currentDateStr.length()).isEqualTo(DateFormartConst.DATETIME.length());
     }
 
     @Test
-    public void testGetCurrentDateTimeWithFormat() {
+    void testGetCurrentDateTimeWithFormat() {
         Assertions.assertThat(DateUtil.getCurrentDateTime(DateFormartConst.YYYY).length())
                 .isEqualTo(DateFormartConst.YYYY.length());
         Assertions.assertThat(DateUtil.getCurrentDateTime(DateFormartConst.YYYY_MM).length())
@@ -46,7 +61,7 @@ public class DateUtilUnitTest {
     }
 
     @Test
-    public void testFormat() {
+    void testFormat() {
         Assertions.assertThat(DateUtil.format(new Date(), DateFormartConst.YYYY).length())
                 .isEqualTo(DateFormartConst.YYYY.length());
         Assertions.assertThat(DateUtil.format(new Date(), DateFormartConst.YYYY_MM).length())
@@ -64,7 +79,7 @@ public class DateUtilUnitTest {
     }
 
     @Test
-    public void testFormatMillis() {
+    void testFormatMillis() {
         long currentMillis = new Date().getTime();
         Assertions.assertThat(DateUtil.format(currentMillis, DateFormartConst.YYYY).length())
                 .isEqualTo(DateFormartConst.YYYY.length());
@@ -83,29 +98,29 @@ public class DateUtilUnitTest {
     }
 
     @Test
-    public void testFormatDate() {
+    void testFormatDate() {
         Assertions.assertThat(DateUtil.formatDate(new Date()).length()).isEqualTo(DateFormartConst.DATE.length());
     }
 
     @Test
-    public void testFormatDateMillis() {
+    void testFormatDateMillis() {
         Assertions.assertThat(DateUtil.formatDate(new Date().getTime()).length()).isEqualTo(DateFormartConst.DATE.length());
     }
 
     @Test
-    public void testFormatDateTime() {
+    void testFormatDateTime() {
         Assertions.assertThat(DateUtil.formatDateTime(new Date()).length())
                 .isEqualTo(DateFormartConst.DATETIME.length());
     }
 
     @Test
-    public void testFormatDateTimeMillis() {
+    void testFormatDateTimeMillis() {
         Assertions.assertThat(DateUtil.formatDateTime(new Date().getTime()).length())
                 .isEqualTo(DateFormartConst.DATETIME.length());
     }
 
     @Test
-    public void testToDate() {
+    void testToDate() {
         Assertions.assertThat(DateUtil.toDate("2019")).isNotNull();
         Assertions.assertThat(DateUtil.toDate("2019-01")).isNotNull();
         Assertions.assertThat(DateUtil.toDate("2019-01-01")).isNotNull();
@@ -116,7 +131,7 @@ public class DateUtilUnitTest {
     }
 
     @Test
-    public void testToCurrentMillis() {
+    void testToCurrentMillis() {
         Assertions.assertThat(DateUtil.toCurrentMillis("2019")).isNotNull();
         Assertions.assertThat(DateUtil.toCurrentMillis("2019-01")).isNotNull();
         Assertions.assertThat(DateUtil.toCurrentMillis("2019-01-01")).isNotNull();
@@ -127,7 +142,7 @@ public class DateUtilUnitTest {
     }
 
     @Test
-    public void testToDateCurrentMillis() {
+    void testToDateCurrentMillis() {
         Assertions.assertThat(DateUtil.toDate(new Date().getTime())).isNotNull();
     }
 

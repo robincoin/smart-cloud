@@ -1,11 +1,26 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.mask.test.unit;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import junit.framework.TestCase;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.smartframework.cloud.mask.MaskLog;
 import org.smartframework.cloud.mask.MaskRule;
 import org.smartframework.cloud.mask.util.JacksonMaskUtil;
@@ -16,10 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MaskSerializeTest extends TestCase {
+class MaskSerializeTest {
 
     // 手动设置mask属性
-    public void testMaskSerializeSetMaskAttribute() {
+    @Test
+    void testMaskSerializeSetMaskAttribute() {
         LoginVO loginVO = new LoginVO();
         loginVO.setName("名字测试");
         loginVO.setPassword("13112345678");
@@ -32,7 +48,8 @@ public class MaskSerializeTest extends TestCase {
     }
 
     // 普通对象
-    public void testMaskSerializeObject() {
+    @Test
+    void testMaskSerializeObject() {
         User user = new User();
         user.setId(9L);
         user.setName("名字");
@@ -50,7 +67,8 @@ public class MaskSerializeTest extends TestCase {
     }
 
     // 子类对象
-    public void testMaskSerializeSubClass() {
+    @Test
+    void testMaskSerializeSubClass() {
         Student student = new Student();
         student.setId(9L);
         student.setName("名字");
@@ -77,7 +95,8 @@ public class MaskSerializeTest extends TestCase {
     }
 
     // 数组对象
-    public void testMaskSerializeArray() {
+    @Test
+    void testMaskSerializeArray() {
         User user = new User();
         user.setId(9L);
         user.setName("名字");
@@ -101,7 +120,8 @@ public class MaskSerializeTest extends TestCase {
     }
 
     // 嵌套对象
-    public void testMaskSerializeNestedObject() {
+    @Test
+    void testMaskSerializeNestedObject() {
         User user = new User();
         user.setId(9L);
         user.setName("名字");
@@ -131,7 +151,8 @@ public class MaskSerializeTest extends TestCase {
     }
 
     // 泛型对象
-    public void testMaskSerializeGeneric() {
+    @Test
+    void testMaskSerializeGeneric() {
         User user = new User();
         user.setId(9L);
         user.setName("名字");
@@ -168,7 +189,8 @@ public class MaskSerializeTest extends TestCase {
     }
 
     // 泛型对象（外部字段无mask注解）
-    public void testMaskSerializeGeneric2() {
+    @Test
+    void testMaskSerializeGeneric2() {
         User user = new User();
         user.setId(9L);
         user.setName("名字");
@@ -207,7 +229,7 @@ public class MaskSerializeTest extends TestCase {
     @Getter
     @Setter
     @ToString
-    public static class LoginVO implements Serializable {
+    static class LoginVO implements Serializable {
         @MaskLog(startLen = 1, endLen = 1, mask = "###")
         private String name;
         @MaskLog(startLen = 2)
@@ -217,7 +239,7 @@ public class MaskSerializeTest extends TestCase {
     @Getter
     @Setter
     @ToString
-    public static class User implements Serializable {
+    static class User implements Serializable {
         @MaskLog
         private Long id;
         @MaskLog(MaskRule.NAME)
@@ -229,7 +251,7 @@ public class MaskSerializeTest extends TestCase {
     @Getter
     @Setter
     @ToString
-    public static class Student extends User {
+    static class Student extends User {
         private int age;
         @MaskLog(MaskRule.NAME)
         private String className;
@@ -238,7 +260,7 @@ public class MaskSerializeTest extends TestCase {
     @Getter
     @Setter
     @ToString
-    public static class Source implements Serializable {
+    static class Source implements Serializable {
         @MaskLog(MaskRule.IP)
         private String ip;
         private List<User> users;
@@ -247,7 +269,7 @@ public class MaskSerializeTest extends TestCase {
     @Getter
     @Setter
     @ToString
-    public static class Req<T> implements Serializable {
+    static class Req<T> implements Serializable {
         @MaskLog
         private String token;
         private T t;
@@ -256,7 +278,7 @@ public class MaskSerializeTest extends TestCase {
     @Getter
     @Setter
     @ToString
-    public static class Req2<T> implements Serializable {
+    static class Req2<T> implements Serializable {
         private String token;
         private T t;
     }

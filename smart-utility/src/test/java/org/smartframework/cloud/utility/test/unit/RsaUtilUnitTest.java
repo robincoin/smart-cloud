@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.utility.test.unit;
 
 import org.apache.commons.codec.DecoderException;
@@ -18,7 +33,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
-public class RsaUtilUnitTest {
+class RsaUtilUnitTest {
 
     /**
      * 加密、解密
@@ -33,7 +48,7 @@ public class RsaUtilUnitTest {
      * @throws Exception
      */
     @Test
-    public void testEncryptAndDecrypt() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
+    void testEncryptAndDecrypt() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
             IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, DecoderException {
         KeyPair keyPair = RsaUtil.generateKeyPair();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
@@ -44,7 +59,7 @@ public class RsaUtilUnitTest {
 
         String modulus = RsaUtil.getModulus(keyPair);
         String privateExponent = RsaUtil.getPrivateExponent(keyPair);
-        RSAPrivateKey decryptPrivateKey = RsaUtil.getRSAPrivateKey(modulus, privateExponent);
+        RSAPrivateKey decryptPrivateKey = RsaUtil.getRsaPrivateKey(modulus, privateExponent);
 
         // 解密后的文本
         String decryptText = RsaUtil.decryptString(decryptPrivateKey, encryptText);
@@ -63,7 +78,7 @@ public class RsaUtilUnitTest {
      * @throws DecoderException
      */
     @Test
-    public void testSign() throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException,
+    void testSign() throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException,
             SignatureException, UnsupportedEncodingException, DecoderException {
         KeyPair keyPair = RsaUtil.generateKeyPair();
         RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
@@ -76,15 +91,15 @@ public class RsaUtilUnitTest {
     }
 
     @Test
-    public void testGenerateRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, DecoderException {
+    void testGenerateRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, DecoderException {
         KeyPair keyPair = RsaUtil.generateKeyPair();
         String publicExponent = RsaUtil.getPublicExponent(keyPair);
         String modulus = RsaUtil.getModulus(keyPair);
-        RsaUtil.getRSAPublidKey(modulus, publicExponent);
+        RsaUtil.getRsaPublidKey(modulus, publicExponent);
     }
 
     @Test
-    public void testDecryptStringByJs() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
+    void testDecryptStringByJs() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
             IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, DecoderException {
         KeyPair keyPair = RsaUtil.generateKeyPair();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();

@@ -1,10 +1,26 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.code.generate.core;
 
 import lombok.experimental.UtilityClass;
+import net.sf.jsqlparser.JSQLParserException;
 import org.smartframework.cloud.code.generate.bo.ColumnMetaDataBO;
 import org.smartframework.cloud.code.generate.bo.TableMetaDataBO;
 import org.smartframework.cloud.code.generate.bo.template.BaseMapperBO;
-import org.smartframework.cloud.code.generate.bo.template.BaseRespVOBO;
+import org.smartframework.cloud.code.generate.bo.template.BaseRespBO;
 import org.smartframework.cloud.code.generate.bo.template.ClassCommentBO;
 import org.smartframework.cloud.code.generate.bo.template.EntityBO;
 import org.smartframework.cloud.code.generate.properties.CodeProperties;
@@ -14,7 +30,6 @@ import org.smartframework.cloud.code.generate.util.*;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -34,19 +49,19 @@ public class CodeGenerateUtil {
      * @throws ClassNotFoundException
      * @throws SQLException
      * @throws IOException
+     * @throws JSQLParserException
      */
-    public static void init() throws ClassNotFoundException, SQLException, IOException {
+    public static void init() throws Exception {
         YamlProperties yamlProperties = YamlUtil.readYamlProperties();
         YamlPropertiesCheckUtil.check(yamlProperties);
 
         CodeProperties codeProperties = yamlProperties.getCode();
         try (Connection connnection = DbUtil.getConnection(yamlProperties.getDb());) {
             Map<String, TableMetaDataBO> tableMetaDataMap = DbUtil.getTablesMetaData(connnection, codeProperties);
-            ClassCommentBO classComment = TemplateBOUtil.getClassCommentBO(codeProperties.getAuthor());
+            ClassCommentBO classComment = TemplateUtil.getClassCommentBO(codeProperties.getAuthor());
 
-            DatabaseMetaData metaData = connnection.getMetaData();
             for (Map.Entry<String, TableMetaDataBO> entry : tableMetaDataMap.entrySet()) {
-                generateSingleTable(connnection.getCatalog(), entry.getValue(), metaData, classComment, codeProperties);
+                generateSingleTable(connnection.getCatalog(), entry.getValue(), connnection, classComment, codeProperties);
             }
         }
     }
@@ -56,30 +71,31 @@ public class CodeGenerateUtil {
      *
      * @param database      数据库名
      * @param tableMetaData
-     * @param metaData
+     * @param connnection
      * @param classComment  公共信息
      * @param code
      * @throws SQLException
      * @throws IOException
+     * @throws JSQLParserException
      */
-    private static void generateSingleTable(String database, TableMetaDataBO tableMetaData, DatabaseMetaData metaData,
-                                            ClassCommentBO classComment, CodeProperties code) throws SQLException, IOException {
-        List<ColumnMetaDataBO> columnMetaDatas = DbUtil.getTableColumnMetaDatas(metaData, database,
+    private static void generateSingleTable(String database, TableMetaDataBO tableMetaData, Connection connnection,
+                                            ClassCommentBO classComment, CodeProperties code) throws Exception {
+        List<ColumnMetaDataBO> columnMetaDatas = DbUtil.getTableColumnMetaDatas(connnection, database,
                 tableMetaData.getName());
         String mainClassPackage = code.getMainClassPackage();
         PathProperties pathProperties = code.getProject().getPath();
         String rpcPath = pathProperties.getRpc();
         String servicePath = pathProperties.getService();
 
-        EntityBO entityBO = TemplateBOUtil.getEntityBO(tableMetaData, columnMetaDatas, classComment, mainClassPackage,
+        EntityBO entityBO = TemplateUtil.getEntityBO(tableMetaData, columnMetaDatas, classComment, mainClassPackage,
                 code.getMask());
         CodeFileGenerateUtil.generateEntity(entityBO, servicePath);
 
-        BaseRespVOBO baseRespVOBO = TemplateBOUtil.getBaseRespBodyBO(tableMetaData, columnMetaDatas, classComment, mainClassPackage,
+        BaseRespBO baseResp = TemplateUtil.getBaseRespBodyBO(tableMetaData, columnMetaDatas, classComment, mainClassPackage,
                 entityBO.getImportPackages(), code.getMask());
-        CodeFileGenerateUtil.generateBaseRespVO(baseRespVOBO, rpcPath);
+        CodeFileGenerateUtil.generateBaseRespVO(baseResp, rpcPath);
 
-        BaseMapperBO baseMapperBO = TemplateBOUtil.getBaseMapperBO(tableMetaData, entityBO, baseRespVOBO,
+        BaseMapperBO baseMapperBO = TemplateUtil.getBaseMapperBO(tableMetaData, entityBO, baseResp,
                 classComment, mainClassPackage);
         CodeFileGenerateUtil.generateBaseMapper(baseMapperBO, servicePath);
     }

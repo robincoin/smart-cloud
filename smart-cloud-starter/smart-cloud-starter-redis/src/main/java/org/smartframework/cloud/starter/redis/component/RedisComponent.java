@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.starter.redis.component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -77,6 +92,27 @@ public class RedisComponent {
      */
     public Boolean delete(Collection<String> keys) {
         Long count = stringRedisTemplate.delete(keys);
+        return count != null && count == keys.size();
+    }
+
+    /**
+     * 异步删除k-v对
+     *
+     * @param key
+     * @return {@code true}表示成功；{@code false}表示失败。删除一个不存在的key，将返回{@code false}！！！
+     */
+    public Boolean unlink(String key) {
+        return stringRedisTemplate.unlink(key);
+    }
+
+    /**
+     * 异步批量删除k-v对
+     *
+     * @param keys
+     * @return {@code true}表示成功；{@code false}表示失败。删除一个不存在的key，将返回{@code false}！！！
+     */
+    public Boolean unlink(Collection<String> keys) {
+        Long count = stringRedisTemplate.unlink(keys);
         return count != null && count == keys.size();
     }
 

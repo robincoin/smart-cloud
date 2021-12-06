@@ -1,9 +1,26 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.starter.rpc.feign.autoconfigure;
 
 import org.smartframework.cloud.starter.configure.constants.SmartConstant;
+import org.smartframework.cloud.starter.configure.properties.SmartProperties;
 import org.smartframework.cloud.starter.core.business.util.AspectInterceptorUtil;
+import org.smartframework.cloud.starter.core.constants.PackageConfig;
 import org.smartframework.cloud.starter.rpc.feign.annotation.SmartFeignClient;
-import org.smartframework.cloud.starter.rpc.feign.interceptor.FeignInterceptor;
+import org.smartframework.cloud.starter.rpc.feign.interceptor.FeignLogInterceptor;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
@@ -38,8 +55,9 @@ public class FeignAspectAutoConfiguration {
     @Bean
     public AspectJExpressionPointcut feignClientPointcut() {
         AspectJExpressionPointcut feignClientPointcut = new AspectJExpressionPointcut();
-        String feignExpression = AspectInterceptorUtil
-                .getWithinExpression(Arrays.asList(FeignClient.class, SmartFeignClient.class));
+
+        String feignExpression = AspectInterceptorUtil.getFinalExpression(PackageConfig.getBasePackages(), AspectInterceptorUtil
+                .getTypeExpression(Arrays.asList(FeignClient.class, SmartFeignClient.class)));
         feignClientPointcut.setExpression(feignExpression);
         return feignClientPointcut;
     }
@@ -55,12 +73,12 @@ public class FeignAspectAutoConfiguration {
     class FeignLogAutoConfigure {
 
         @Bean
-        public FeignInterceptor feignInterceptor() {
-            return new FeignInterceptor();
+        public FeignLogInterceptor feignInterceptor(final SmartProperties smartProperties) {
+            return new FeignLogInterceptor(smartProperties.getLog());
         }
 
         @Bean
-        public Advisor feignLogAdvisor(final FeignInterceptor feignInterceptor,
+        public Advisor feignLogAdvisor(final FeignLogInterceptor feignInterceptor,
                                        final AspectJExpressionPointcut feignClientPointcut) {
             DefaultBeanFactoryPointcutAdvisor feignAdvisor = new DefaultBeanFactoryPointcutAdvisor();
             feignAdvisor.setAdvice(feignInterceptor);

@@ -1,40 +1,55 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.utility.test.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.message.BasicNameValuePair;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.smartframework.cloud.utility.HttpUtil;
-import org.smartframework.cloud.utility.test.integration.vo.GetPageReqVO;
-import org.smartframework.cloud.utility.test.integration.vo.GetPageRespVO;
-import org.smartframework.cloud.utility.test.integration.vo.PostUrlEncodedRespVO;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.smartframework.cloud.utility.test.integration.prepare.TestApplication;
+import org.smartframework.cloud.utility.test.integration.prepare.vo.GetPageReqVO;
+import org.smartframework.cloud.utility.test.integration.prepare.vo.GetPageRespVO;
+import org.smartframework.cloud.utility.test.integration.prepare.vo.PostUrlEncodedRespVO;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootApplication
-public class HttpUtilIntegrationTest {
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+class HttpUtilIntegrationTest {
+
     /**
      * 服务启动端口
      */
-    private static final int PORT = 12345;
-    private static final String REQUEST_URL_PREFIX = "http://localhost:" + PORT + "/test";
-    private static boolean bootstrap = false;
+    private static final int DEFAULT_PORT = 8080;
+    private static final String REQUEST_URL_PREFIX = "http://localhost:" + DEFAULT_PORT + "/test";
 
     @Test
-    public void testGet() throws IOException {
-        startService();
+    void testGet() throws IOException {
         String result = HttpUtil.get(REQUEST_URL_PREFIX + "?str=test", null);
         Assertions.assertThat(result).isEqualTo("test");
     }
 
     @Test
-    public void testGetReturnType() throws IOException {
-        startService();
-
+    void testGetReturnType() throws IOException {
         GetPageReqVO reqVO = new GetPageReqVO();
         reqVO.setStr("test");
         reqVO.setIds(new long[]{1, 2, 3});
@@ -47,15 +62,13 @@ public class HttpUtilIntegrationTest {
     }
 
     @Test
-    public void testPostWithRaw() throws IOException {
-        startService();
+    void testPostWithRaw() throws IOException {
         String result = HttpUtil.postWithRaw(REQUEST_URL_PREFIX, "test");
         Assertions.assertThat(result).isEqualTo("test");
     }
 
     @Test
-    public void testPostWithRawReturnType() throws IOException {
-        startService();
+    void testPostWithRawReturnType() throws IOException {
         List<String> result = HttpUtil.postWithRaw(REQUEST_URL_PREFIX + "/list", "test",
                 new TypeReference<List<String>>() {
                 });
@@ -63,8 +76,7 @@ public class HttpUtilIntegrationTest {
     }
 
     @Test
-    public void testPostWithUrlEncoded() throws IOException {
-        startService();
+    void testPostWithUrlEncoded() throws IOException {
         List<BasicNameValuePair> parameters = new ArrayList<>();
         String id = "100";
         parameters.add(new BasicNameValuePair("id", id));
@@ -73,13 +85,6 @@ public class HttpUtilIntegrationTest {
                 });
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(result.getId()).isEqualTo(id);
-    }
-
-    private void startService() {
-        if (!bootstrap) {
-            bootstrap = true;
-            SpringApplication.run(HttpUtilIntegrationTest.class, "--server.port=" + PORT);
-        }
     }
 
 }

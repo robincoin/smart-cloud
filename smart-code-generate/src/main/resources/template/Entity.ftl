@@ -1,18 +1,30 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ${packageName};
 
-<#list importPackages as package>
-import ${package};
-
-</#list>
-import javax.persistence.Column;
-import javax.persistence.Table;
-
-import org.smartframework.cloud.starter.mybatis.common.mapper.entity.BaseEntity;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+<#list importPackages as package>
+import ${package};
+</#list>
+import org.smartframework.cloud.starter.mybatis.plus.common.mapper.entity.BaseEntity;
 
 /**
  * ${tableComment}
@@ -24,30 +36,24 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@Table(name = "${tableName}")
+@TableName("${tableName}")
 public class ${className} extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
 <#list attributes as attribute>
-	<#if attribute.comment!="">
+	<#if attribute.comment?? && attribute.comment!="">
     /** ${attribute.comment} */
 	</#if>
 	<#if attribute.maskRule??>
     @MaskLog(MaskRule.${attribute.maskRule})
 	</#if>
-    @Column(name = "${attribute.columnName}")     
+    <#if attribute.primaryKey>
+    @TableId(value = "${attribute.columnName}")
+    <#else>
+    @TableField(value = "${attribute.columnName}")
+    </#if>
 	private ${attribute.javaType} ${attribute.name};
 	
 </#list>
-	/** 表字段名 */
-	public enum Columns {
-		<#list attributes as attribute>
-		<#if attribute.comment!="">
-	    /** ${attribute.comment} */
-		</#if>
-		${attribute.name}<#if attribute_has_next>,<#else>;</#if>
-		</#list>
-	}
-
 }

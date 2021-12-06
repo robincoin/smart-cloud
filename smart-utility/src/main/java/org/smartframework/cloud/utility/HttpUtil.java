@@ -1,9 +1,23 @@
+/*
+ * Copyright © 2019 collin (1634753825@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.smartframework.cloud.utility;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
@@ -31,7 +45,6 @@ import java.util.Map;
  * @author liyulin
  * @date 2019-05-03
  */
-@UtilityClass
 @Slf4j
 public class HttpUtil {
 
@@ -51,6 +64,9 @@ public class HttpUtil {
      * 从连接池中获取连接的超时时间（单位毫秒，默认2秒）
      */
     private static final int CONNECTION_REQUEST_TIMEOUT = 2000;
+
+    private HttpUtil() {
+    }
 
     /**
      * post（raw）方式请求（编码为UTF-8，超时时间10秒）
@@ -160,7 +176,9 @@ public class HttpUtil {
                 result = EntityUtils.toString(entity, charset);
             }
         } finally {
-            log.info("{} | headers=>{}, stringEntity=>{}, result=>{}", url, JacksonUtil.toJson(headers), stringEntity, result);
+            if (log.isInfoEnabled()) {
+                log.info("{} | headers=>{}, stringEntity=>{}, result=>{}", url, JacksonUtil.toJson(headers), stringEntity, result);
+            }
         }
 
         return result;
@@ -219,7 +237,9 @@ public class HttpUtil {
                 result = EntityUtils.toString(entity, charset);
             }
         } finally {
-            log.info("{} | parameters=>{}, result=>{}", url, JacksonUtil.toJson(parameters), result);
+            if (log.isInfoEnabled()) {
+                log.info("{} | parameters=>{}, result=>{}", url, JacksonUtil.toJson(parameters), result);
+            }
         }
 
         return result;
@@ -314,7 +334,7 @@ public class HttpUtil {
         URIBuilder builder = new URIBuilder(URI.create(url));
         builder.setCharset(StandardCharsets.UTF_8);
         if (StringUtils.isNotBlank(requestJsonStr)) {
-            JsonNode jsonNodeElements = JacksonUtil.parseObject(requestJsonStr);
+            JsonNode jsonNodeElements = JacksonUtil.parse(requestJsonStr);
             Iterator<Map.Entry<String, JsonNode>> jsonNodeIterator = jsonNodeElements.fields();
             while (jsonNodeIterator.hasNext()) {
                 Map.Entry<String, JsonNode> entry = jsonNodeIterator.next();
@@ -344,7 +364,9 @@ public class HttpUtil {
                 result = EntityUtils.toString(entity, charset);
             }
         } finally {
-            log.info("{} | requestJsonStr={}, result=>{}", url, requestJsonStr, result);
+            if (log.isInfoEnabled()) {
+                log.info("{} | requestJsonStr={}, result=>{}", url, requestJsonStr, result);
+            }
         }
 
         return result;
